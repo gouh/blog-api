@@ -1,0 +1,33 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: ${COMPOSE_NETWORK}
+
+services:
+  blog-nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}-nginx
+    image: nginx:alpine
+    expose:
+      - ${NGINX_HOST_HTTP_PORT}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
+      - ${NGINX_SITES_PATH}:/etc/nginx/templates
+    environment:
+      - VIRTUAL_HOST=${NGINX_VHOST}
+      - PHP_FPM_CONTAINER=${PHP_FPM_CONTAINER}
+      - CODE_PATH=${APP_CODE_PATH_CONTAINER}
+    links:
+      - ${PHP_FPM_CONTAINER}
+
+  blog-php:
+    container_name: ${COMPOSE_PROJECT_NAME}-php
+    image: gouh/php:7.4-fpm-pdo-redis
+    environment:
+      TZ: ${WORKSPACE_TIMEZONE}
+    env_file:
+      - proyect.env
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
