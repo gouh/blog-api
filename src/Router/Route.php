@@ -58,6 +58,7 @@ final class Route
      */
     public function match(string $path, string $method): bool
     {
+        $path = explode('?', $path)[0];
         $regex = $this->getPath();
         foreach ($this->getVarsNames() as $variable) {
             $varName = trim($variable, '{\}');
