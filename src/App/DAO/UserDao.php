@@ -31,6 +31,42 @@ class UserDao implements DAOPaginationInterface
         return $user;
     }
 
+    /**
+     * @param $filter
+     * @return string
+     */
+    private function getWhereSql($filter): string
+    {
+        $whereSql = [];
+        foreach ($filter as $key => $value){
+            $whereSql[] = "$key = :$key";
+        }
+        return implode(" AND ", $whereSql);
+    }
+
+    /**
+     * @param array $filter
+     * @return object[]
+     */
+    public function findBy(array $filter): array
+    {
+        $users = [];
+        $sql = "SELECT * FROM user WHERE " . $this->getWhereSql($filter);
+        $stmt = $this->connection->prepare($sql);
+        if ($stmt) {
+            foreach ($filter as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_CLASS, User::class);
+        }
+
+        return $users;
+    }
+
+    /**
+     * @return array
+     */
     public function findAll(): array
     {
         $user = [];
@@ -43,6 +79,11 @@ class UserDao implements DAOPaginationInterface
         return $user;
     }
 
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
     public function findAllPagination(int $limit, int $offset): array
     {
         $users = [];

@@ -11,6 +11,12 @@ interface DAOInterface
     public function find(int $id): ?object;
 
     /**
+     * @param array
+     * @return object[]
+     */
+    public function findBy(array $filter): array;
+
+    /**
      * @return object[]
      */
     public function findAll(): array;
