@@ -35,8 +35,8 @@ final class Route
      * @param string $path
      * @param array $parameters
      *    $parameters = [
-     *      0 => (string) Controller name : HomeController::class.
-     *      1 => (string|null) Method name or null if invoke method
+     *      (string) Class name
+     *      (string|null) Method name or null if invoke method
      *    ]
      * @param array $methods
      */
@@ -51,6 +51,11 @@ final class Route
         $this->methods = $methods;
     }
 
+    /**
+     * @param string $path
+     * @param string $method
+     * @return bool
+     */
     public function match(string $path, string $method): bool
     {
         $regex = $this->getPath();
@@ -71,42 +76,67 @@ final class Route
         return false;
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function getPath(): string
     {
         return $this->path;
     }
 
+    /**
+     * @return array|string[]
+     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
+    /**
+     * @return array|string[]
+     */
     public function getMethods(): array
     {
         return $this->methods;
     }
 
+    /**
+     * @return array
+     */
     public function getVarsNames(): array
     {
         preg_match_all('/{[^}]*}/', $this->path, $matches);
         return reset($matches) ?? [];
     }
 
+    /**
+     * @return bool
+     */
     public function hasVars(): bool
     {
         return $this->getVarsNames() !== [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getVars(): array
     {
         return $this->vars;
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public static function trimPath(string $path): string
     {
         return '/' . rtrim(ltrim(trim($path), '/'), '/');
