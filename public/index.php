@@ -21,10 +21,9 @@ try {
         $handler =  [$handler, $methodName];
     }
 
-    $handler(...array_values($arguments));
-} catch (\Exception $exception) {
+    $handler(\Gouh\BlogApi\Request\ServerRequest::fromGlobals($arguments));
+} catch (\Exception $e) {
     header("HTTP/1.0 404 Not Found");
 } catch (\Psr\Container\ContainerExceptionInterface $e) {
     header("HTTP/1.0 500 Internal Server Error");
-    echo $e->getMessage();
 }

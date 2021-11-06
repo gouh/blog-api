@@ -2,12 +2,16 @@
 
 namespace Gouh\BlogApi\App\Handler;
 
+use Gouh\BlogApi\Request\ServerRequest;
+use Gouh\BlogApi\Response\ServerResponse;
+
 class HealthHandler
 {
-    public function get()
+    public function get(ServerRequest $request)
     {
-        echo json_encode([
-            "php" => phpversion()
+        ServerResponse::JsonResponse([
+            "php" => phpversion(),
+            "queryParams" => $request->getQueryParams(),
         ]);
     }
 }
