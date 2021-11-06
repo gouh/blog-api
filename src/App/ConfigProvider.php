@@ -18,6 +18,9 @@ class ConfigProvider
     {
         return [
             'factory' => [
+                # Database
+                \PDO::class => \Gouh\BlogApi\App\Factory\Database\PDOFactory::class,
+                # Handlers
                 \Gouh\BlogApi\App\Handler\HealthHandler::class => \Gouh\BlogApi\App\Factory\Handler\HealthHandlerFactory::class,
             ]
         ];
