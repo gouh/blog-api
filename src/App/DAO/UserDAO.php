@@ -112,18 +112,93 @@ class UserDAO extends AbstractDAO implements InterfacePaginationDAO
         return $users;
     }
 
-    public function save(object $entity): object
+    /**
+     * @return object|null
+     */
+    public function countPagination(): ?object
     {
-        return new \stdClass();
+        $userCount = null;
+        $stmt = $this->connection->query("SELECT count(*) FROM user");
+
+        if ($stmt) {
+            $stmt->execute();
+            $userCount = $stmt->fetch();
+        }
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
+        }
+
+        return $userCount;
     }
 
-    public function update(int $id, object $entity): object
+    /**
+     * @param User $entity
+     * @return User
+     */
+    public function save($entity): object
     {
-        return new \stdClass();
+        $stmt = $this->connection->prepare("INSERT INTO user(name, lastName, email, password, rol_id) 
+                    VALUES(:name, :lastName, :email, :password, :rolId)");
+
+        $user = null;
+        if ($stmt) {
+            $result = $stmt->execute([
+                ':name' => $entity->getName(),
+                ':lastName' => $entity->getLastName(),
+                ':email' => $entity->getEmail(),
+                ':password' => $entity->getPassword(),
+                ':rolId' => $entity->getRolId(),
+            ]);
+            if ($result) {
+                $user = $this->find((int)$this->connection->lastInsertId());
+            }
+        }
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param User $entity
+     * @return User
+     */
+    public function update($entity): object
+    {
+        $stmt = $this->connection->prepare("UPDATE user SET 
+                    name=:name, lastName=:lastName, email=:email, password=:password, rol_id=:rolId
+                    WHERE user_id=:userId");
+
+        $user = null;
+        if ($stmt) {
+            $result = $stmt->execute([
+                ':name' => $entity->getName(),
+                ':lastName' => $entity->getLastName(),
+                ':email' => $entity->getEmail(),
+                ':password' => $entity->getPassword(),
+                ':rolId' => $entity->getRolId(),
+                ':userId' => $entity->getUserId(),
+            ]);
+            if ($result) {
+                $user = $entity;
+            }
+        }
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
+        }
+
+        return $user;
     }
 
     public function delete(int $id, object $entity): bool
     {
-        return true;
+        return false;
     }
 }
