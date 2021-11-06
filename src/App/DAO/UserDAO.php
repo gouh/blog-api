@@ -139,8 +139,8 @@ class UserDAO extends AbstractDAO implements InterfacePaginationDAO
      */
     public function save($entity): object
     {
-        $stmt = $this->connection->prepare("INSERT INTO user(name, lastName, email, password, rol_id) 
-                    VALUES(:name, :lastName, :email, :password, :rolId)");
+        $stmt = $this->connection->prepare("INSERT INTO user(name, lastName, email, password, role_id) 
+                    VALUES(:name, :lastName, :email, :password, :roleId)");
 
         $user = null;
         if ($stmt) {
@@ -149,7 +149,7 @@ class UserDAO extends AbstractDAO implements InterfacePaginationDAO
                 ':lastName' => $entity->getLastName(),
                 ':email' => $entity->getEmail(),
                 ':password' => $entity->getPassword(),
-                ':rolId' => $entity->getRolId(),
+                ':roleId' => $entity->getRoleId(),
             ]);
             if ($result) {
                 $user = $this->find((int)$this->connection->lastInsertId());
@@ -171,7 +171,7 @@ class UserDAO extends AbstractDAO implements InterfacePaginationDAO
     public function update($entity): object
     {
         $stmt = $this->connection->prepare("UPDATE user SET 
-                    name=:name, lastName=:lastName, email=:email, password=:password, rol_id=:rolId
+                    name=:name, lastName=:lastName, email=:email, password=:password, role_id=:roleId
                     WHERE user_id=:userId");
 
         $user = null;
@@ -181,7 +181,7 @@ class UserDAO extends AbstractDAO implements InterfacePaginationDAO
                 ':lastName' => $entity->getLastName(),
                 ':email' => $entity->getEmail(),
                 ':password' => $entity->getPassword(),
-                ':rolId' => $entity->getRolId(),
+                ':roleId' => $entity->getRoleId(),
                 ':userId' => $entity->getUserId(),
             ]);
             if ($result) {

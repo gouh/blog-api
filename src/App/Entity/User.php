@@ -32,7 +32,7 @@ class User
     /**
      * @var int
      */
-    private int $rolId;
+    private int $roleId;
 
     /**
      * @return int
@@ -117,17 +117,17 @@ class User
     /**
      * @return int
      */
-    public function getRolId(): int
+    public function getRoleId(): int
     {
-        return $this->rolId;
+        return $this->roleId;
     }
 
     /**
-     * @param int $rolId
+     * @param int $roleId
      */
-    public function setRolId(int $rolId): void
+    public function setRoleId(int $roleId): void
     {
-        $this->rolId = $rolId;
+        $this->roleId = $roleId;
     }
 
     public function __set($name, $value) {}
