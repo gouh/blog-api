@@ -1,10 +1,10 @@
 <?php
 
-namespace Gouh\BlogApi\Handler;
+namespace Gouh\BlogApi\App\Handler;
 
 class HealthHandler
 {
-    public function __invoke()
+    public function get()
     {
         echo json_encode([
             "php" => phpversion()
