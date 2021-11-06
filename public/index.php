@@ -3,9 +3,10 @@
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-$config = (new \Gouh\BlogApi\ConfigProvider())();
-
 try {
+    $config = require 'config/local.php';
+
+    $container = new \Gouh\BlogApi\Container\Container($config['dependencies']);
     $router = new \Gouh\BlogApi\Router\Router($config['routes']);
     $route = $router->matchFromPath($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
@@ -15,7 +16,7 @@ try {
     $handlerName = $parameters[0];
     $methodName = $parameters[1] ?? null;
 
-    $handler = new $handlerName();
+    $handler = $container->get($handlerName);
     if (!is_callable($handler)) {
         $handler =  [$handler, $methodName];
     }
@@ -23,4 +24,7 @@ try {
     $handler(...array_values($arguments));
 } catch (\Exception $exception) {
     header("HTTP/1.0 404 Not Found");
+} catch (\Psr\Container\ContainerExceptionInterface $e) {
+    header("HTTP/1.0 500 Internal Server Error");
+    echo $e->getMessage();
 }
