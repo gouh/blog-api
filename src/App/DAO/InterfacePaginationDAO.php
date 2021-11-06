@@ -10,4 +10,9 @@ interface InterfacePaginationDAO extends InterfaceDAO
      * @return array
      */
     public function findAllPagination(int $limit, int $offset): array;
+
+    /**
+     * @return object|null
+     */
+    public function countPagination(): ?object;
 }

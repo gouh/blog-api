@@ -28,11 +28,10 @@ interface InterfaceDAO
     public function save(object $entity): object;
 
     /**
-     * @param int $id
      * @param object $entity
      * @return object
      */
-    public function update(int $id, object $entity): object;
+    public function update(object $entity): object;
 
     /**
      * @param int $id
