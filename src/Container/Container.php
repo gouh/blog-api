@@ -97,28 +97,28 @@ class Container implements ContainerInterface
 
     /**
      * Resolves a class name and creates its instance with dependencies
-     * @param $alias
+     * @param $id
      * @return object The resolved instance
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    public function resolve($alias): object
+    public function resolve($id): object
     {
-        $reflector = $this->getReflector($alias);
+        $reflector = $this->getReflector($id);
         $constructor = $reflector->getConstructor();
         if ($reflector->isInterface()) {
             return $this->resolveInterface($reflector);
         }
         if (!$reflector->isInstantiable()) {
             throw new ContainerException(
-                "Cannot inject {$reflector->getName()} to $alias because it cannot be instantiated"
+                "Cannot inject {$reflector->getName()} to $id because it cannot be instantiated"
             );
         }
         if (null === $constructor) {
             return $reflector->newInstance();
         }
-        $args = $this->getArguments($alias, $constructor);
+        $args = $this->getArguments($id, $constructor);
         return $reflector->newInstanceArgs($args);
     }
 
@@ -128,22 +128,22 @@ class Container implements ContainerInterface
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public function singleton($alias)
+    public function singleton($id)
     {
-        if (!isset($this->instances[$alias])) {
-            $this->instances[$alias] = $this->resolve(
-                $this->entries[$alias]
+        if (!isset($this->instances[$id])) {
+            $this->instances[$id] = $this->resolve(
+                $this->entries[$id]
             );
         }
-        return $this->instances[$alias];
+        return $this->instances[$id];
     }
 
     /**
      * @throws NotFoundExceptionInterface
      */
-    public function getReflector($alias): ReflectionClass
+    public function getReflector($id): ReflectionClass
     {
-        $class = $this->entries[$alias];
+        $class = $this->entries[$id];
         try {
             return (new ReflectionClass($class));
         } catch (ReflectionException $e) {
@@ -159,7 +159,7 @@ class Container implements ContainerInterface
      * @return array The arguments
      * @throws NotFoundException|ContainerExceptionInterface|ReflectionException
      */
-    public function getArguments($alias, ReflectionMethod $constructor): array
+    public function getArguments($id, ReflectionMethod $constructor): array
     {
         $args = [];
         $params = $constructor->getParameters();
@@ -170,8 +170,8 @@ class Container implements ContainerInterface
                 );
             } elseif ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
-            } elseif (isset($this->rules[$alias][$param->getName()])) {
-                $args[] = $this->rules[$alias][$param->getName()];
+            } elseif (isset($this->rules[$id][$param->getName()])) {
+                $args[] = $this->rules[$id][$param->getName()];
             }
         }
         return $args;
