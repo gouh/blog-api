@@ -4,8 +4,9 @@ namespace Gouh\BlogApi\App\DAO;
 
 use Gouh\BlogApi\App\Entity\User;
 use PDO;
+use PDOException;
 
-class UserDao implements DAOPaginationInterface
+class UserDAO extends AbstractDAO implements InterfacePaginationDAO
 {
     /** @var PDO */
     private PDO $connection;
@@ -23,25 +24,19 @@ class UserDao implements DAOPaginationInterface
     {
         $user = null;
         $stmt = $this->connection->prepare("SELECT * FROM user WHERE user_id=:id");
+
         if ($stmt) {
             $stmt->execute(['id' => $id]);
             $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
             $user = $stmt->fetch();
         }
-        return $user;
-    }
 
-    /**
-     * @param $filter
-     * @return string
-     */
-    private function getWhereSql($filter): string
-    {
-        $whereSql = [];
-        foreach ($filter as $key => $value){
-            $whereSql[] = "$key = :$key";
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
         }
-        return implode(" AND ", $whereSql);
+
+        return $user;
     }
 
     /**
@@ -53,12 +48,18 @@ class UserDao implements DAOPaginationInterface
         $users = [];
         $sql = "SELECT * FROM user WHERE " . $this->getWhereSql($filter);
         $stmt = $this->connection->prepare($sql);
+
         if ($stmt) {
             foreach ($filter as $key => $value) {
                 $stmt->bindValue(":$key", $value);
             }
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_CLASS, User::class);
+        }
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
         }
 
         return $users;
@@ -69,14 +70,21 @@ class UserDao implements DAOPaginationInterface
      */
     public function findAll(): array
     {
-        $user = [];
+        $users = [];
         $stmt = $this->connection->prepare("SELECT * FROM user");
+
         if ($stmt) {
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
             $users = $stmt->fetchAll();
         }
-        return $user;
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
+        }
+
+        return $users;
     }
 
     /**
@@ -88,12 +96,19 @@ class UserDao implements DAOPaginationInterface
     {
         $users = [];
         $stmt = $this->connection->prepare("SELECT * FROM user LIMIT :limit OFFSET :offset");
+
         if ($stmt) {
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_CLASS, User::class);
         }
+
+        $errors = $stmt->errorInfo();
+        if ($errors[1]) {
+            throw new PDOException($errors[2], $errors[1]);
+        }
+
         return $users;
     }
 

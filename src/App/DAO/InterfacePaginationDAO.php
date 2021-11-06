@@ -2,7 +2,7 @@
 
 namespace Gouh\BlogApi\App\DAO;
 
-interface DAOPaginationInterface extends DAOInterface
+interface InterfacePaginationDAO extends InterfaceDAO
 {
     /**
      * @param int $limit

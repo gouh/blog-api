@@ -2,7 +2,7 @@
 
 namespace Gouh\BlogApi\App\DAO;
 
-interface DAOInterface
+interface InterfaceDAO
 {
     /**
      * @param int $id
