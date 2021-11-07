@@ -44,10 +44,9 @@ class PostArrayStrategy implements InterfaceStrategy
      */
     public function build($data): array
     {
+        $result = [];
         if (is_array($data)) {
             $result = $this->usersToArray($data);
-        } else {
-            $result = $this->mapPost($data);
         }
         return $result;
     }

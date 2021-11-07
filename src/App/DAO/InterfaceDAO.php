@@ -6,9 +6,9 @@ interface InterfaceDAO
 {
     /**
      * @param int $id
-     * @return object|null
+     * @return mixed
      */
-    public function find(int $id): ?object;
+    public function find(int $id);
 
     /**
      * @param array

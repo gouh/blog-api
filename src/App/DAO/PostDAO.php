@@ -2,6 +2,7 @@
 
 namespace Gouh\BlogApi\App\DAO;
 
+use Exception;
 use Gouh\BlogApi\App\Entity\Post;
 use PDO;
 use PDOException;
@@ -17,21 +18,21 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
         $this->connection = $connection;
     }
 
-    public function find(int $id): ?object
+    public function find(int $id)
     {
-        $user = null;
+        $post = null;
         $stmt = $this->connection->prepare("SELECT 
                 post_id as postId, 
                 user_id as userId,
                 title, 
                 description, 
                 created_at as createdAt 
-            FROM post WHERE user_id=:id and status=1");
+            FROM post WHERE post_id=:id and status=1");
 
         if ($stmt) {
             $stmt->execute(['id' => $id]);
             $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
-            $user = $stmt->fetch();
+            $post = $stmt->fetch();
         }
 
         $errors = $stmt->errorInfo();
@@ -39,7 +40,7 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
             throw new PDOException($errors[2], $errors[1]);
         }
 
-        return $user;
+        return $post;
     }
 
     /**
@@ -84,12 +85,12 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
      */
     public function countPagination(): ?array
     {
-        $userCount = null;
+        $postCount = null;
         $stmt = $this->connection->query("SELECT count(*) as postCount FROM post where status=1");
 
         if ($stmt) {
             $stmt->execute();
-            $userCount = $stmt->fetch();
+            $postCount = $stmt->fetch();
         }
 
         $errors = $stmt->errorInfo();
@@ -97,7 +98,7 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
             throw new PDOException($errors[2], $errors[1]);
         }
 
-        return $userCount;
+        return $postCount;
     }
 
     /**
@@ -106,18 +107,18 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
      */
     public function save($entity): object
     {
-        $stmt = $this->connection->prepare("INSERT INTO post(title, description, created_at, user_id) 
-                    VALUES(:title, :description, :createdAt, :userId)");
+        $stmt = $this->connection->prepare("INSERT INTO post(title, description, user_id) 
+                    VALUES(:title, :description, :userId)");
 
-        $user = null;
+        $post = null;
         if ($stmt) {
             $result = $stmt->execute([
-                ':userId' => $entity->getUserId(),
                 ':title' => $entity->getTitle(),
                 ':description' => $entity->getDescription(),
+                ':userId' => $entity->getUserId(),
             ]);
             if ($result) {
-                $user = $this->find((int)$this->connection->lastInsertId());
+                $post = $this->find((int)$this->connection->lastInsertId());
             }
         }
 
@@ -126,24 +127,30 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
             throw new PDOException($errors[2], $errors[1]);
         }
 
-        return $user;
+        return $post;
     }
 
-    public function update(object $entity): object
+    /**
+     * @param Post $entity
+     * @return object
+     * @throws Exception|PDOException
+     */
+    public function update($entity): object
     {
-        $stmt = $this->connection->prepare("UPDATE post SET 
-                    title=:title, description=:description
-                    WHERE post_id=:postId");
-
-        $user = null;
+        $stmt = $this->connection->prepare("UPDATE post SET title=:title, description=:description WHERE post_id=:postId");
+        $post = null;
         if ($stmt) {
             $result = $stmt->execute([
-                ':title' => $entity->getName(),
-                ':description' => $entity->getLastName(),
-                ':postId' => $entity->getLastName(),
+                ':title' => $entity->getTitle(),
+                ':description' => $entity->getDescription(),
+                ':postId' => $entity->getPostId(),
             ]);
+
             if ($result) {
-                $user = $entity;
+                $post = $this->find($entity->getPostId());
+                if (!$post) {
+                    throw new Exception("The indicated record does not exist", 404);
+                }
             }
         }
 
@@ -151,13 +158,21 @@ class PostDAO extends AbstractDAO implements InterfacePaginationDAO
         if ($errors[1]) {
             throw new PDOException($errors[2], $errors[1]);
         }
-
-        return $user;
+        return $post;
     }
 
+    /**
+     * @param int $id
+     * @return bool
+     * @throws Exception
+     */
     public function delete(int $id): bool
     {
         $stmt = $this->connection->prepare("UPDATE post SET status=0 WHERE post_id=:postId");
+        $post = $this->find($id);
+        if (!$post) {
+            throw new Exception("The indicated record does not exist", 404);
+        }
 
         $deleted = false;
         if ($stmt) {

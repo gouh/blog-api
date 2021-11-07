@@ -38,7 +38,10 @@ class ConfigProvider
         return [
             new Route('health', '/health', [\Gouh\BlogApi\App\Handler\HealthHandler::class, 'get'], ['GET']),
             new Route('register', '/register', [\Gouh\BlogApi\App\Handler\RegisterHandler::class, 'post'], ['POST']),
-            new Route('lists.posts', '/post', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'getAll'], ['GET']),
+            new Route('list.posts', '/posts', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'getAll'], ['GET']),
+            new Route('add.post', '/posts', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'post'], ['POST']),
+            new Route('update.post', '/posts/{postId}', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'update'], ['PUT']),
+            new Route('delete.post', '/posts/{postId}', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'delete'], ['DELETE']),
         ];
     }
 }
