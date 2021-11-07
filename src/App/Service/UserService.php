@@ -8,9 +8,12 @@ use Gouh\BlogApi\App\DTO\Strategy\UserArrayStrategy;
 use Gouh\BlogApi\App\DTO\Strategy\UserObjectStrategy;
 use Gouh\BlogApi\App\Entity\Role;
 use Gouh\BlogApi\App\Entity\User;
+use Gouh\BlogApi\App\Traits\EncryptTrait;
 
 class UserService
 {
+    use EncryptTrait;
+
     /** @var InterfaceDAO  */
     private InterfaceDAO $userDao;
 
@@ -20,11 +23,15 @@ class UserService
     /** @var InterfaceDTO  */
     private InterfaceDTO $userDto;
 
-    public function __construct(InterfaceDAO $userDao, InterfaceDAO $roleDao, InterfaceDTO $userDto)
+    /** @var array  */
+    private array $config;
+
+    public function __construct(InterfaceDAO $userDao, InterfaceDAO $roleDao, InterfaceDTO $userDto, array $config)
     {
         $this->userDao = $userDao;
         $this->roleDao = $roleDao;
         $this->userDto = $userDto;
+        $this->config = $config;
     }
 
     /**
@@ -35,6 +42,7 @@ class UserService
     {
         /** @var User $user */
         $user = $this->userDto->map($data, UserObjectStrategy::class);
+        $user->setPassword($this->encrypt($user->getPassword()));
         $user = $this->userDao->save($user);
         /** @var Role $role */
         $role = $this->roleDao->find($user->getRoleId());

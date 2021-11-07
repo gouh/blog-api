@@ -23,6 +23,7 @@ class UserServiceFactory
         $userDao = $container->get(UserDAO::class);
         $roleDao = $container->get(RoleDAO::class);
         $userDto = $container->get(UserDTO::class);
-        return new UserService($userDao, $roleDao, $userDto);
+        $config = $container->get('config');
+        return new UserService($userDao, $roleDao, $userDto, $config);
     }
 }

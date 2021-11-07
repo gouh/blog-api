@@ -3,6 +3,7 @@
 namespace Gouh\BlogApi\App\Handler;
 
 use Exception;
+use Gouh\BlogApi\App\Middleware\UserMiddleware;
 use Gouh\BlogApi\App\Service\UserService;
 use Gouh\BlogApi\Request\ServerRequest;
 use Gouh\BlogApi\Response\ServerResponse;
@@ -12,9 +13,13 @@ class RegisterHandler
     /** @var UserService  */
     private UserService $userService;
 
-    public function __construct(UserService $userService)
+    /** @var UserMiddleware  */
+    private UserMiddleware $userMiddleware;
+
+    public function __construct(UserService $userService, UserMiddleware $userMiddleware)
     {
         $this->userService = $userService;
+        $this->userMiddleware = $userMiddleware;
     }
 
     /**
@@ -23,6 +28,7 @@ class RegisterHandler
     public function post(ServerRequest $request)
     {
         try {
+            $this->userMiddleware->process($request);
             $user = $this->userService->save($request->getParsedBody());
             if (!empty($user)) {
                 ServerResponse::JsonResponse([
@@ -32,7 +38,7 @@ class RegisterHandler
             }
             ServerResponse::JsonResponse([
                 'message' => 'User could not be created, please try again.',
-                'data' => $user,
+                'data' => [],
             ], 400);
         } catch (Exception $e) {
             ServerResponse::JsonResponse([

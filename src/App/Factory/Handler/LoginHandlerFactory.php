@@ -2,6 +2,7 @@
 
 namespace Gouh\BlogApi\App\Factory\Handler;
 
+use Gouh\BlogApi\App\Middleware\LoginMiddleware;
 use Gouh\BlogApi\App\Handler\LoginHandler;
 use Gouh\BlogApi\App\Service\LoginService;
 use Psr\Container\ContainerExceptionInterface;
@@ -17,6 +18,7 @@ class LoginHandlerFactory
     public function __invoke(ContainerInterface $container): LoginHandler
     {
         $loginService = $container->get(LoginService::class);
-        return new LoginHandler($loginService);
+        $loginMiddleware = $container->get(LoginMiddleware::class);
+        return new LoginHandler($loginService, $loginMiddleware);
     }
 }

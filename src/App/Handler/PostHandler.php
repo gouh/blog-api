@@ -3,6 +3,7 @@
 namespace Gouh\BlogApi\App\Handler;
 
 use Exception;
+use Gouh\BlogApi\App\Middleware\PostMiddleware;
 use Gouh\BlogApi\App\Middleware\RoleMiddleware;
 use Gouh\BlogApi\App\Service\PostService;
 use Gouh\BlogApi\Request\ServerRequest;
@@ -16,14 +17,19 @@ class PostHandler
     /** @var RoleMiddleware  */
     private RoleMiddleware $roleMiddleware;
 
+    /** @var PostMiddleware  */
+    private PostMiddleware $postMiddleware;
+
     /**
      * @param PostService $postService
      * @param RoleMiddleware $roleMiddleware
+     * @param PostMiddleware $postMiddleware
      */
-    public function __construct(PostService $postService, RoleMiddleware $roleMiddleware)
+    public function __construct(PostService $postService, RoleMiddleware $roleMiddleware, PostMiddleware $postMiddleware)
     {
         $this->postService = $postService;
         $this->roleMiddleware = $roleMiddleware;
+        $this->postMiddleware = $postMiddleware;
     }
 
     /**
@@ -67,6 +73,7 @@ class PostHandler
         try {
             $serverRequest->setAttribute('requiredRole', '3,4,5');
             $serverRequest = $this->roleMiddleware->process($serverRequest);
+            $this->postMiddleware->process($serverRequest);
             $post = $this->postService->save($serverRequest->getParsedBody());
             if (!empty($post)) {
                 ServerResponse::JsonResponse([
@@ -100,6 +107,7 @@ class PostHandler
         try {
             $serverRequest->setAttribute('requiredRole', '4,5');
             $serverRequest = $this->roleMiddleware->process($serverRequest);
+            $this->postMiddleware->process($serverRequest);
             $postId = (int) $serverRequest->getAttribute('postId');
             $post = $this->postService->update($postId, $serverRequest->getParsedBody());
             if (!empty($post)) {

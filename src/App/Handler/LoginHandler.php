@@ -3,6 +3,7 @@
 namespace Gouh\BlogApi\App\Handler;
 
 use Exception;
+use Gouh\BlogApi\App\Middleware\LoginMiddleware;
 use Gouh\BlogApi\App\Service\LoginService;
 use Gouh\BlogApi\Request\ServerRequest;
 use Gouh\BlogApi\Response\ServerResponse;
@@ -13,12 +14,17 @@ class LoginHandler
     /** @var LoginService */
     private LoginService $loginService;
 
+    /** @var LoginMiddleware  */
+    private LoginMiddleware $loginMiddleware;
+
     /**
      * @param LoginService $loginService
+     * @param LoginMiddleware $loginMiddleware
      */
-    public function __construct(LoginService $loginService)
+    public function __construct(LoginService $loginService, LoginMiddleware $loginMiddleware)
     {
         $this->loginService = $loginService;
+        $this->loginMiddleware = $loginMiddleware;
     }
 
     /**
@@ -27,6 +33,7 @@ class LoginHandler
     public function post(ServerRequest $serverRequest)
     {
         try {
+            $this->loginMiddleware->process($serverRequest);
             $jwt = $this->loginService->login($serverRequest->getParsedBody());
             if (!empty($jwt)) {
                 ServerResponse::JsonResponse([

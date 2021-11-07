@@ -2,6 +2,7 @@
 
 namespace Gouh\BlogApi\App\Factory\Handler;
 
+use Gouh\BlogApi\App\Middleware\UserMiddleware;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -19,6 +20,7 @@ class RegisterHandlerFactory
     public function __invoke(ContainerInterface $container): RegisterHandler
     {
         $userService = $container->get(UserService::class);
-        return new RegisterHandler($userService);
+        $userMiddleware = $container->get(UserMiddleware::class);
+        return new RegisterHandler($userService, $userMiddleware);
     }
 }
