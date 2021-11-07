@@ -2,6 +2,8 @@
 
 namespace Gouh\BlogApi\App\Middleware;
 
+use Gouh\BlogApi\App\DAO\InterfaceDAO;
+use Gouh\BlogApi\App\Entity\User;
 use Gouh\BlogApi\App\Traits\JWTTrait;
 use Gouh\BlogApi\Request\ServerRequest;
 use Gouh\BlogApi\Response\ServerResponse;
@@ -17,13 +19,22 @@ class RoleMiddleware
     # 5 -> Rol alto - Permiso de acceso, consulta, agregar, actualizar y eliminar
     private const ROLE = [1, 2, 3, 4, 5];
 
+    /** @var array  */
     private array $config;
 
-    public function __construct(array $config)
+    /** @var InterfaceDAO  */
+    private InterfaceDAO $userDAO;
+
+    public function __construct(array $config, InterfaceDAO $userDAO)
     {
         $this->config = $config;
+        $this->userDAO = $userDAO;
     }
 
+    /**
+     * @param ServerRequest $request
+     * @return ServerRequest
+     */
     public function process(ServerRequest $request): ServerRequest
     {
         $jwtPayload = $this->validJwt($this->getJwt($request));
@@ -35,7 +46,9 @@ class RoleMiddleware
             ], 403);
         }
 
-        $role = intval($jwtPayload['role']);
+        /** @var User $user */
+        $user = $this->userDAO->find($jwtPayload['user']);
+        $role = $user->getRoleId();
         if (in_array($role, self::ROLE)) {
             $requiredRole = $request->getAttribute('requiredRole');
             if (in_array($role, explode(',', $requiredRole))) {

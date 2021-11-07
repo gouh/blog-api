@@ -2,6 +2,7 @@
 
 namespace Gouh\BlogApi\App\Factory\Middleware;
 
+use Gouh\BlogApi\App\DAO\UserDAO;
 use Gouh\BlogApi\App\Middleware\RoleMiddleware;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -18,6 +19,7 @@ class RoleMiddlewareFactory
     public function __invoke(ContainerInterface $container): RoleMiddleware
     {
         $config = $container->get('config');
-        return new RoleMiddleware($config);
+        $userDao = $container->get(UserDAO::class);
+        return new RoleMiddleware($config, $userDao);
     }
 }
