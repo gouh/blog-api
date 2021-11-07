@@ -68,7 +68,7 @@ GET /healthcheck
 
 Es un endpoint con el cual se puede registrar a un usuario.
 
-```json
+```bash
 GET /register
 ```
 
@@ -104,7 +104,7 @@ GET /register
 
 ### Login
 
-```json
+```bash
 GET /login
 ```
 
@@ -143,7 +143,7 @@ Es importante que para cualquiera de los siguientes endpoints se utilice el toke
   Como opcionales se le pueden enviar los queryParams "page" y "pageSize"
 
 
-```json
+```bash
 GET /posts
 ```
 
@@ -197,7 +197,7 @@ GET /posts
   Para ingresar a este endpoint el usuario debe tener uno de los siguientes roles 3,4,5
 
 
-```json
+```bash
 POST /posts
 ```
 
@@ -212,7 +212,7 @@ POST /posts
 
 - Ejemplo de respuesta
 
-```json
+```bash
 {
     "message": "Post created successfully.",
     "data": {
@@ -230,7 +230,7 @@ POST /posts
   Para ingresar a este endpoint el usuario debe tener uno de los siguientes roles 4,5
 
 
-```json
+```bash
 PUT /posts/{id}
 ```
 
@@ -263,7 +263,7 @@ PUT /posts/{id}
   Para ingresar a este endpoint el usuario debe tener el siguiente rol 5
 
 
-```json
+```bash
 PUT /posts/{id}
 ```
 
