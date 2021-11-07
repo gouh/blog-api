@@ -12,7 +12,7 @@ interface InterfacePaginationDAO
     public function findAllPagination(int $limit, int $offset): array;
 
     /**
-     * @return object|null
+     * @return array|null
      */
-    public function countPagination(): ?object;
+    public function countPagination(): ?array;
 }

@@ -35,8 +35,7 @@ interface InterfaceDAO
 
     /**
      * @param int $id
-     * @param object $entity
      * @return bool
      */
-    public function delete(int $id, object $entity): bool;
+    public function delete(int $id): bool;
 }
