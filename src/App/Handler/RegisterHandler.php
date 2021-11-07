@@ -34,7 +34,7 @@ class RegisterHandler
                 'message' => 'User could not be created, please try again.',
                 'data' => $user,
             ], 400);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             ServerResponse::JsonResponse([
                 'message' => 'Failed to create a user, please try again',
                 'data' => [

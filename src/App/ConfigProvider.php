@@ -24,9 +24,11 @@ class ConfigProvider
                 # Handler
                 \Gouh\BlogApi\App\Handler\HealthHandler::class => \Gouh\BlogApi\App\Factory\Handler\HealthHandlerFactory::class,
                 \Gouh\BlogApi\App\Handler\RegisterHandler::class => \Gouh\BlogApi\App\Factory\Handler\RegisterHandlerFactory::class,
+                \Gouh\BlogApi\App\Handler\PostHandler::class => \Gouh\BlogApi\App\Factory\Handler\PostHandlerFactory::class,
 
                 # Service
                 \Gouh\BlogApi\App\Service\UserService::class => \Gouh\BlogApi\App\Factory\Service\UserServiceFactory::class,
+                \Gouh\BlogApi\App\Service\PostService::class => \Gouh\BlogApi\App\Factory\Service\PostServiceFactory::class,
             ]
         ];
     }
@@ -36,6 +38,7 @@ class ConfigProvider
         return [
             new Route('health', '/health', [\Gouh\BlogApi\App\Handler\HealthHandler::class, 'get'], ['GET']),
             new Route('register', '/register', [\Gouh\BlogApi\App\Handler\RegisterHandler::class, 'post'], ['POST']),
+            new Route('lists.posts', '/post', [\Gouh\BlogApi\App\Handler\PostHandler::class, 'getAll'], ['GET']),
         ];
     }
 }

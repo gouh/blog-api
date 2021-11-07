@@ -107,7 +107,7 @@ class RoleDao extends AbstractDAO
         return new stdClass();
     }
 
-    public function delete(int $id, object $entity): bool
+    public function delete(int $id): bool
     {
         return false;
     }
