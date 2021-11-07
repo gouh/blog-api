@@ -6,6 +6,26 @@ networks:
       name: ${COMPOSE_NETWORK}
 
 services:
+  blog-php:
+    container_name: ${COMPOSE_PROJECT_NAME}-php
+    image: gouh/php:7.4-fpm-pdo-redis
+    environment:
+      TZ: ${WORKSPACE_TIMEZONE}
+    env_file:
+      - proyect.env
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  blog-install-project:
+    container_name: ${COMPOSE_PROJECT_NAME}-install-project
+    image: gouh/php:7.4-fpm-pdo-redis
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    working_dir: ${APP_CODE_PATH_CONTAINER}
+    command: ["composer", "install"]
+    links:
+      - ${PHP_FPM_CONTAINER}
+
   blog-nginx:
     container_name: ${COMPOSE_PROJECT_NAME}-nginx
     image: nginx:alpine
@@ -21,13 +41,3 @@ services:
       - CODE_PATH=${APP_CODE_PATH_CONTAINER}
     links:
       - ${PHP_FPM_CONTAINER}
-
-  blog-php:
-    container_name: ${COMPOSE_PROJECT_NAME}-php
-    image: gouh/php:7.4-fpm-pdo-redis
-    environment:
-      TZ: ${WORKSPACE_TIMEZONE}
-    env_file:
-      - proyect.env
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
