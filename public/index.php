@@ -23,7 +23,8 @@ try {
             'message' => 'Error in container',
             'data' => [
                 'error' => $e->getMessage(),
-                'code' => $e->getCode()
+                'code' => $e->getCode(),
+                'trace' => $e->getTrace()
             ]
         ], 500);
     }
