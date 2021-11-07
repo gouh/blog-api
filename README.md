@@ -15,6 +15,7 @@ Puedes montar el proyecto de manera tradicional en tu carpeta de proyectos en do
 El proyecto utiliza la función [getenv](https://www.php.net/manual/es/function.getenv.php) de PHP la cual le permite acceder a las variables de entorno donde se encuentre montado, si no correras el proyecto en un contenedor te sugiero que entres a la carpeta "config" y en el archivo local modifiques los siguientes valores.
 
 ```php
+<?php
 getenv('MYSQL_HOST')
 getenv('MYSQL_PORT')
 getenv('MYSQL_USER')
@@ -212,13 +213,13 @@ POST /posts
 
 - Ejemplo de respuesta
 
-```bash
+```json
 {
     "message": "Post created successfully.",
     "data": {
         "postId": 1,
         "title": "Nuevo post",
-        "description": "Esta es una descripcion"
+        "description": "Esta es una descripcion",
         "createdAt": "2021-11-07 12:29:03"
     },
     "paginate": []
