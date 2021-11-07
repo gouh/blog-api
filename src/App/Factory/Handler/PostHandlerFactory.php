@@ -2,6 +2,7 @@
 
 namespace Gouh\BlogApi\App\Factory\Handler;
 
+use Gouh\BlogApi\App\Factory\Middleware\RoleMiddlewareFactory;
 use Gouh\BlogApi\App\Handler\PostHandler;
 use Gouh\BlogApi\App\Service\PostService;
 use Psr\Container\ContainerExceptionInterface;
@@ -17,6 +18,7 @@ class PostHandlerFactory
     public function __invoke(ContainerInterface $container): PostHandler
     {
         $postService = $container->get(PostService::class);
-        return new PostHandler($postService);
+        $roleMiddleware = $container->get(RoleMiddlewareFactory::class);
+        return new PostHandler($postService, $roleMiddleware);
     }
 }

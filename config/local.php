@@ -15,6 +15,7 @@ $config = [
             'dsn' => 'mysql:host=' . $databaseConfig['host'] . ';port='
                 . $databaseConfig['port'] . ';dbname=' . $databaseConfig['dbname'],
         ],
+        'secret' => getenv('PWD_SECRET')
     ],
 ];
 

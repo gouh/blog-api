@@ -3,17 +3,27 @@
 namespace Gouh\BlogApi\App\Handler;
 
 use Exception;
+use Gouh\BlogApi\App\Middleware\RoleMiddleware;
 use Gouh\BlogApi\App\Service\PostService;
 use Gouh\BlogApi\Request\ServerRequest;
 use Gouh\BlogApi\Response\ServerResponse;
 
 class PostHandler
 {
+    /** @var PostService  */
     private PostService $postService;
 
-    public function __construct(PostService $postService)
+    /** @var RoleMiddleware  */
+    private RoleMiddleware $roleMiddleware;
+
+    /**
+     * @param PostService $postService
+     * @param RoleMiddleware $roleMiddleware
+     */
+    public function __construct(PostService $postService, RoleMiddleware $roleMiddleware)
     {
         $this->postService = $postService;
+        $this->roleMiddleware = $roleMiddleware;
     }
 
     /**
@@ -22,6 +32,8 @@ class PostHandler
     public function getAll(ServerRequest $serverRequest)
     {
         try {
+            $serverRequest->setAttribute('requiredRole', '2,4,5');
+            $serverRequest = $this->roleMiddleware->process($serverRequest);
             $result = $this->postService->getAll($serverRequest->getQueryParams());
             if (!empty($result['posts'])) {
                 ServerResponse::JsonResponse([
@@ -47,9 +59,14 @@ class PostHandler
         }
     }
 
+    /**
+     * @param ServerRequest $serverRequest
+     */
     public function post(ServerRequest $serverRequest)
     {
         try {
+            $serverRequest->setAttribute('requiredRole', '3,4,5');
+            $serverRequest = $this->roleMiddleware->process($serverRequest);
             $post = $this->postService->save($serverRequest->getParsedBody());
             if (!empty($post)) {
                 ServerResponse::JsonResponse([
@@ -75,9 +92,14 @@ class PostHandler
         }
     }
 
+    /**
+     * @param ServerRequest $serverRequest
+     */
     public function update(ServerRequest $serverRequest)
     {
         try {
+            $serverRequest->setAttribute('requiredRole', '4,5');
+            $serverRequest = $this->roleMiddleware->process($serverRequest);
             $postId = (int) $serverRequest->getAttribute('postId');
             $post = $this->postService->update($postId, $serverRequest->getParsedBody());
             if (!empty($post)) {
@@ -104,9 +126,14 @@ class PostHandler
         }
     }
 
+    /**
+     * @param ServerRequest $serverRequest
+     */
     public function delete(ServerRequest $serverRequest)
     {
         try {
+            $serverRequest->setAttribute('requiredRole', '5');
+            $serverRequest = $this->roleMiddleware->process($serverRequest);
             $postId = (int) $serverRequest->getAttribute('postId');
             $deleted = $this->postService->delete($postId);
             if ($deleted) {
