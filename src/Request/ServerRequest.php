@@ -56,12 +56,12 @@ class ServerRequest
         array  $serverParams = []
     )
     {
-        $this->method = $method;
-        $this->headers = $headers;
-        $this->queryParams = $queryParams;
-        $this->parsedBody = $parsedBody;
-        $this->version = $version;
-        $this->serverParams = $serverParams;
+        $this->setMethod($method);
+        $this->setHeaders($headers);
+        $this->setQueryParams($queryParams);
+        $this->setParsedBody($parsedBody);
+        $this->setVersion($version);
+        $this->setServerParams($serverParams);
     }
 
     /**
