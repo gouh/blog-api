@@ -20,8 +20,13 @@ class ConfigProvider
             'factory' => [
                 # Database
                 \PDO::class => \Gouh\BlogApi\App\Factory\Database\PDOFactory::class,
-                # Handlers
+
+                # Handler
                 \Gouh\BlogApi\App\Handler\HealthHandler::class => \Gouh\BlogApi\App\Factory\Handler\HealthHandlerFactory::class,
+                \Gouh\BlogApi\App\Handler\RegisterHandler::class => \Gouh\BlogApi\App\Factory\Handler\RegisterHandlerFactory::class,
+
+                # Service
+                \Gouh\BlogApi\App\Service\UserService::class => \Gouh\BlogApi\App\Factory\Service\UserServiceFactory::class,
             ]
         ];
     }
@@ -30,6 +35,7 @@ class ConfigProvider
     {
         return [
             new Route('health', '/health', [\Gouh\BlogApi\App\Handler\HealthHandler::class, 'get'], ['GET']),
+            new Route('register', '/register', [\Gouh\BlogApi\App\Handler\RegisterHandler::class, 'post'], ['POST']),
         ];
     }
 }

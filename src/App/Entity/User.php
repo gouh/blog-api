@@ -35,6 +35,16 @@ class User
     private int $roleId;
 
     /**
+     * @var Role|null
+     */
+    private ?Role $role;
+
+    public function __construct()
+    {
+        $this->role = null;
+    }
+
+    /**
      * @return int
      */
     public function getUserId(): int
@@ -130,5 +140,19 @@ class User
         $this->roleId = $roleId;
     }
 
-    public function __set($name, $value) {}
+    /**
+     * @return Role|null
+     */
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param Role $role
+     */
+    public function setRole(Role $role): void
+    {
+        $this->role = $role;
+    }
 }
