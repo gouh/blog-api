@@ -16,9 +16,20 @@ try {
     $handlerName = $parameters[0];
     $methodName = $parameters[1] ?? null;
 
-    $handler = $container->get($handlerName);
+    try {
+        $handler = $container->get($handlerName);
+    } catch (\Throwable $e) {
+        \Gouh\BlogApi\Response\ServerResponse::JsonResponse([
+            'message' => 'Error in container',
+            'data' => [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ]
+        ], 500);
+    }
+
     if (!is_callable($handler)) {
-        $handler =  [$handler, $methodName];
+        $handler = [$handler, $methodName];
     }
 
     $handler(\Gouh\BlogApi\Request\ServerRequest::fromGlobals($arguments));
