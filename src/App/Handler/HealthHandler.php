@@ -7,11 +7,13 @@ use Gouh\BlogApi\Response\ServerResponse;
 
 class HealthHandler
 {
+    /**
+     * @param ServerRequest $request
+     */
     public function get(ServerRequest $request)
     {
         ServerResponse::JsonResponse([
-            "php" => phpversion(),
-            "queryParams" => $request->getQueryParams(),
+            "php" => phpversion()
         ]);
     }
 }
